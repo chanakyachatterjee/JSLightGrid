@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Grid Demo</title>
+    <script type="text/javascript" src="JSLightGrid-1.0.1.js"></script>
+    <script type="text/javascript" src="TestData.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="JSLightGrid-1.0.1.css" />
+    
+</head>
+<body>
+    <div id="dvGrid" style="width:1600px;">
+
+    </div>
+
+    <div id="dvGrid1" style="width:200px">
+
+    </div>
+    <button onclick="getnewdata();">get data</button>
+    
+    <script type="text/javascript">
+
+
+        var cols = [
+            { Name: 'name',DisplayName:'User Name', Width: 28, type: '', Html: '<span onclick="alert(\'{{description}}\')">{{name}}</span>' },
+            { Name: 'description', Width: 28, type: '' },
+            { Name: 'age', Width: 28, type: 'select', data: [{ key: 1, value: "one" }, { key: 2, value: "two" }, { key: 108, value: "hundred eight" }, { key: 15, value: "fifteen" }] }
+        ]
+        //var cols = [
+        //{ Name: '@Address', DisplayName: 'Property Address', Width: 30 },
+        //{ Name: '@Description', DisplayName: 'Description', Width: 30 },
+        //{ Name: '@AvailabilityType', DisplayName: 'Availability Type', Width: 20 }
+        //]
+
+        var colsStock = [// { Name: '@Share' , DisplayName: 'Share' , Width: 8 },
+        { Name: '@Address', DisplayName: 'Property Address', Width: 8 },
+        { Name: '@Description', DisplayName: 'Description', Width: 8 },
+        { Name: '@AvailabilityType', DisplayName: 'Availability Type', Width: 6 },
+        { Name: '@Unit', DisplayName: 'Unit', Width: 8 },
+        { Name: '@Floor', DisplayName: 'Floor', Width: 6 },
+        { Name: '@Percentage', DisplayName: 'Percent Interest', Width: 8 },
+        { Name: '@Area', DisplayName: 'Estimated Area', Width: 6 },
+        { Name: '@UOM', DisplayName: 'UOM', Width: 8 },
+        { Name: '@Currency', DisplayName: 'Currency', Width: 8 },
+        { Name: '@Price', DisplayName: 'Estimated Price', Width: 6 },
+        { Name: '@DateAvailable', DisplayName: 'Date Available', Width: 8 },
+        { Name: '@OwnerName', DisplayName: 'Owner', Width: 8 }
+        ]
+
+        //document.getElementById("dvGrid").JSLightGrid(getVerySmallDataSet(), cols, "", "", "", "", true, true, 10, 2);
+        //document.getElementById("dvGrid").JSLightGrid({
+        //    //ElementID: "dvGrid",
+        //    data: getStockData(),
+        //    colDesc: colsStock,
+        //    Editable: true,
+        //    pageSize: 10
+        //});
+
+        //JSLightGrid({
+        //    ElementID: "dvGrid",
+        //    data: getStockData(),
+        //    colDesc: colsStock,
+        //    Editable: true,
+        //    pageSize: 2,
+        //    ShowDirtyFlag: true
+        //});
+       var test= JSLightGrid({
+            ElementID: "dvGrid",
+            data: getData(),
+            colDesc: cols,
+            Editable: true,
+            pageSize: 20,
+           ShowDirtyFlag: true,
+           ShowFooter:true,
+            template: 2,
+           CurrentPageText:"Showing"
+       });
+       self = this;
+        function getnewdata() {
+        
+            self.test.getDirtyData("dvGrid");
+        }
+        //  document.getElementById("dvGrid").JSLightGrid(data, cols, "", "", "", "", true, true, 5, 2);
+        //JSLightGrid( data, cols, "", "", "", "", true, true, 3, 2);
+    </script>
+
+</body>
+
+</html>
