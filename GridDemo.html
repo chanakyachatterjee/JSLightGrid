@@ -18,15 +18,15 @@
     <div id="dvGrid1" style="width:200px">
 
     </div>
-    <button onclick="getnewdata();">get data</button>
+    <!--<button onclick="getnewdata();">get data</button>-->
     
     <script type="text/javascript">
 
 
         var cols = [
             { Name: 'name',DisplayName:'User Name', Width: 28, type: '', Html: '<span onclick="alert(\'{{description}}\')">{{name}}</span>' },
-            { Name: 'description', Width: 28, type: '' },
-            { Name: 'age', Width: 28, type: 'select', data: [{ key: 1, value: "one" }, { key: 2, value: "two" }, { key: 108, value: "hundred eight" }, { key: 15, value: "fifteen" }] }
+            { Name: 'Description', Width: 28, type: '' },
+            { Name: 'Category', Width: 28, type: 'select', data: [{ key: 1, value: "one" }, { key: 2, value: "two" }, { key: 108, value: "hundred eight" }, { key: 15, value: "fifteen" }] }
         ]
         //var cols = [
         //{ Name: '@Address', DisplayName: 'Property Address', Width: 30 },
