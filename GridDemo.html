@@ -8,85 +8,102 @@
     <script type="text/javascript" src="TestData.js"></script>
 
     <link rel="stylesheet" type="text/css" href="JSLightGrid-1.0.1.css" />
-    
+    <style type="text/css">
+        #dvGrid2 .headerRow div {
+            height:40px!important;
+        }
+        label{font-weight:bold;}
+    </style>
 </head>
 <body>
+    <label>Demo Grid1 (Template 1): (8 Records,Basic, Responsive,  Sortable ,Pagination )</label>
+    <br /><br />
+    <div id="dvGrid2" style="width:100%;">
+
+    </div>
+    <br /><br /><br />
+    <label>Demo Grid2 (Template 2): (2000 Records, Responsive, Editable, Sortable and with templated columns, onclick of the name col calls a JS function)</label>
+    <br /><br />
     <div id="dvGrid" style="width:100%;">
 
     </div>
-    <div id="dvGrid2" style="width:1600px;">
-
+    <br /><br />
+    <button onclick="showDirtyGrid();">Show Dirty Data</button>
+    <br /><br />
+    <label>Demo Grid3 (Template 1): Populates modified data of grid1(Responsive,  Sortable , onclick of the name col calls a JS function)</label>
+    <br /><br />
+    <div id="dvGrid1" >
+        [Change anything in Grid1 and click "Show Dirty Data" button]
     </div>
 
-    <div id="dvGrid1" style="width:200px">
-
-    </div>
-    <!--<button onclick="getnewdata();">get data</button>-->
     
     <script type="text/javascript">
 
 
         var cols = [
-            { Name: 'name',DisplayName:'User Name', Width: 28, type: '', Html: '<span onclick="alert(\'{{description}}\')">{{name}}</span>' },
+            { Name: 'name',DisplayName:'Product Name', Width: 28, type: '', Html: '<span onclick="alert(\'You have clicked on {{name}}\')">{{name}}</span>' },
             { Name: 'description',DisplayName:'Description', Width: 28, type: '' },
-            { Name: 'age', DisplayName:'Category', Width: 28, type: 'select', data: [{ key: 1, value: "one" }, { key: 2, value: "two" }, { key: 108, value: "hundred eight" }, { key: 15, value: "fifteen" }] }
-        ]
-        //var cols = [
-        //{ Name: '@Address', DisplayName: 'Property Address', Width: 30 },
-        //{ Name: '@Description', DisplayName: 'Description', Width: 30 },
-        //{ Name: '@AvailabilityType', DisplayName: 'Availability Type', Width: 20 }
-        //]
-
-        var colsStock = [// { Name: '@Share' , DisplayName: 'Share' , Width: 8 },
-        { Name: '@Address', DisplayName: 'Property Address', Width: 8 },
-        { Name: '@Description', DisplayName: 'Description', Width: 8 },
-        { Name: '@AvailabilityType', DisplayName: 'Availability Type', Width: 6 },
-        { Name: '@Unit', DisplayName: 'Unit', Width: 8 },
-        { Name: '@Floor', DisplayName: 'Floor', Width: 6 },
-        { Name: '@Percentage', DisplayName: 'Percent Interest', Width: 8 },
-        { Name: '@Area', DisplayName: 'Estimated Area', Width: 6 },
-        { Name: '@UOM', DisplayName: 'UOM', Width: 8 },
-        { Name: '@Currency', DisplayName: 'Currency', Width: 8 },
-        { Name: '@Price', DisplayName: 'Estimated Price', Width: 6 },
-        { Name: '@DateAvailable', DisplayName: 'Date Available', Width: 8 },
-        { Name: '@OwnerName', DisplayName: 'Owner', Width: 8 }
+            { Name: 'age', DisplayName: 'Category', Width: 20, type: 'select', data: [{ key: 1, value: "one" }, { key: 2, value: "two" }, { key: 108, value: "hundred eight" }, { key: 15, value: "fifteen" }] },
+            { Name: 'InStock', DisplayName: 'In Stock', Width: 10, type: '', Html: '<input type="checkbox" {{InStock}} class="field" />' },
         ]
 
-        //document.getElementById("dvGrid").JSLightGrid(getVerySmallDataSet(), cols, "", "", "", "", true, true, 10, 2);
-        //document.getElementById("dvGrid").JSLightGrid({
-        //    //ElementID: "dvGrid",
-        //    data: getStockData(),
-        //    colDesc: colsStock,
-        //    Editable: true,
-        //    pageSize: 10
-        //});
+        var colsChkDisable = [
+           { Name: 'name', DisplayName: 'Product Name', Width: 28, type: '', Html: '<span onclick="alert(\'You have clicked on {{name}}\')">{{name}}</span>' },
+           { Name: 'description', DisplayName: 'Description', Width: 28, type: '' },
+           { Name: 'age', DisplayName: 'Category', Width: 20, type: 'select', data: [{ key: 1, value: "one" }, { key: 2, value: "two" }, { key: 108, value: "hundred eight" }, { key: 15, value: "fifteen" }] },
+           { Name: 'InStock', DisplayName: 'In Stock', Width: 10, type: '', Html: '<input disabled type="checkbox" {{InStock}} class="field" />' },
+        ]
+   
 
-        //JSLightGrid({
-        //    ElementID: "dvGrid",
-        //    data: getStockData(),
-        //    colDesc: colsStock,
-        //    Editable: true,
-        //    pageSize: 2,
-        //    ShowDirtyFlag: true
-        //});
-       var test= JSLightGrid({
+        var colsTrains = [
+        { Name: 'trainName', DisplayName: 'Train Name', Width: 15 },
+        { Name: 'StartPoint', DisplayName: 'Start Point', Width: 12 },
+        { Name: 'EndPoint', DisplayName: 'End Point', Width: 12 },
+        { Name: 'Duration', DisplayName: 'Duration [Hr]', Width: 10 },
+        { Name: 'Fair', DisplayName: 'Fair', Width: 6 },
+        { Name: 'Currency', DisplayName: 'Currency', Width: 8 },
+        { Name: 'FoodServed', DisplayName: 'Food Served', Width: 8, Html: '<input type="radio" disabled {{FoodServed}} class="field" />' },
+        ]
+
+    
+
+        JSLightGrid({
+            ElementID: "dvGrid2",
+            data: getTrainData(),
+            colDesc: colsTrains,
+            Editable: false,
+            pageSize: 3,
+            ShowDirtyFlag: false,
+            CurrentPageText:"Current Page"
+        });
+        
+        var testGrid= JSLightGrid({
             ElementID: "dvGrid",
-            data: getData(),
+            data: getDataSet(),
             colDesc: cols,
             Editable: true,
-            pageSize: 20,
+            pageSize: 10,
            ShowDirtyFlag: true,
            ShowFooter:true,
             template: 2,
-           CurrentPageText:"Showing"
+            CurrentPageText: "Showing"
        });
-       self = this;
-        function getnewdata() {
-        
-            self.test.getDirtyData("dvGrid");
+        self = this;
+        function showDirtyGrid()
+        {
+            JSLightGrid({
+                ElementID: "dvGrid1",
+                data: testGrid.getDirtyData("dvGrid"),
+                colDesc: colsChkDisable,
+                Editable: false,
+                pageSize: 4,
+                ShowDirtyFlag: false,
+                ShowFooter: true,
+                template: 1,
+                CurrentPageText: "Page#"
+            });
         }
-        //  document.getElementById("dvGrid").JSLightGrid(data, cols, "", "", "", "", true, true, 5, 2);
-        //JSLightGrid( data, cols, "", "", "", "", true, true, 3, 2);
+
     </script>
 
 </body>
