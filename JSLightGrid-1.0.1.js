@@ -23,7 +23,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
  */
-
+var JSLightGrid_optionsCache = [];
 //Object.prototype.JSLightGrid=function(options) {
 JSLightGrid = function JSLightGrid(options) {
     if (typeof options != 'undefined' && typeof options.colDesc != 'undefined' && options.colDesc != null && options.colDesc.length != 0) {
@@ -39,6 +39,7 @@ JSLightGrid = function JSLightGrid(options) {
         //setting the default values
 
         var defaults = {
+            ID: "JSLG_" + Math.random().toString(),
             data: [],
             colDesc: [],
             OddCSS: 'oddRow',
@@ -65,6 +66,7 @@ JSLightGrid = function JSLightGrid(options) {
         this.Initialize = function (elem, gridOption) {
             if (typeof options.ElementID != 'undefined' && options.ElementID != null) {
                 JSLightGrid({
+                    ID: gridOption.ID,
                     ElementID: gridOption.ElementID,
                     data: gridOption.data,
                     colDesc: gridOption.colDesc,
@@ -87,11 +89,12 @@ JSLightGrid = function JSLightGrid(options) {
                     ShowDirtyFlag: gridOption.ShowDirtyFlag,
                     NextButtonText: gridOption.NextButtonText,
                     PrevButtonText: gridOption.PrevButtonText,
-                    CurrentPageText: opt.CurrentPageText
+                    CurrentPageText: gridOption.CurrentPageText
                 });
             }
             else {
                 elem.JSLightGrid({
+                    ID: gridOption.ID,
                     data: gridOption.data,
                     colDesc: gridOption.colDesc,
                     OddCSS: gridOption.OddCSS,
@@ -113,7 +116,7 @@ JSLightGrid = function JSLightGrid(options) {
                     ShowDirtyFlag: gridOption.ShowDirtyFlag,
                     NextButtonText: gridOption.NextButtonText,
                     PrevButtonText: gridOption.PrevButtonText,
-                    CurrentPageText: opt.CurrentPageText
+                    CurrentPageText: gridOption.CurrentPageText
                 });
             }
         }
@@ -135,7 +138,9 @@ JSLightGrid = function JSLightGrid(options) {
             return data;
 
         }
-
+        this.getOptions = function (ID) {
+            return JSLightGrid_optionsCache[ID];
+        }
 
         //get only the visible col's data
         this.getDataWIP = function (elementId) {
@@ -210,14 +215,19 @@ JSLightGrid = function JSLightGrid(options) {
         }
 
         this.opt = this.extend(defaults, options);
-
+        JSLightGrid_optionsCache[opt.ID] = this.opt;
         //for dirty flag
         if (this.opt.ShowDirtyFlag) {
             this.JSLightGrid_updateDirty = function (rowId, parentId, obj) {
                 document.getElementById(rowId).getElementsByClassName("dirty")[0].style.display = "block";
                 document.getElementById(rowId).getElementsByClassName("dirty")[0].style.visibility = "visible";
                 document.getElementById(rowId).setAttribute("data-isDirty", "1");
-                document.getElementById(parentId).setAttribute("data-value", obj.value);
+                var value = "";
+                if (obj.type == "checkbox" || obj.type == "radio")
+                    value = obj.checked ? "checked" : "";
+                else
+                    value = obj.value;
+                document.getElementById(parentId).setAttribute("data-value", value);
             }
         }
         //setting variables(will be removed later)
@@ -237,15 +247,16 @@ JSLightGrid = function JSLightGrid(options) {
             var rows = domElem.getElementsByClassName("rowJSLightGrid");
             var cols;
             var data = [], value;
+            opt = self.getOptions(domElem.getElementsByClassName("gridClass")[0].id);
             for (var i = 0; i < rows.length; i++) {
                 if (rows[i].getAttribute("data-isDirty") == "1") {
                     cols = rows[i].getElementsByClassName("colJSLightGrid");
                     for (var j = 0; j < cols.length; j++) {
                         value = cols[j].getAttribute("data-value");
                         // if (object[datacols[j].getAttribute("data-name")] != 'none')
-                        self.opt.data[i][cols[j].getAttribute("data-name")] = (typeof value != 'undefined' && value != null ? value : '');
+                        opt.data[i][cols[j].getAttribute("data-name")] = (typeof value != 'undefined' && value != null ? value : '');
                     }
-                    data.push(self.opt.data[i]);
+                    data.push(opt.data[i]);
                 }
             }
             return data;
@@ -274,6 +285,7 @@ JSLightGrid = function JSLightGrid(options) {
         }
         dv = document.createElement("div");
         dv.className = "gridClass";
+        dv.id = opt.ID;
         tempData = data.slice(currentPage * pageSize, (currentPage * pageSize) + pageSize);
         //if (template == 1) {
         //    tempData = data.slice(currentPage * pageSize, (currentPage * pageSize) + pageSize);
@@ -366,11 +378,11 @@ JSLightGrid = function JSLightGrid(options) {
             }
             else if ((currentPage * pageSize) + pageSize < data.length && this.opt.currentPage == 0) {
                 html += '<div class="' + FooterCSS + '" ><span style="float:left">' + opt.TotalItemText + ':' + opt.data.length + '(' + opt.CurrentPageText + ':' + (opt.currentPage + 1) + ')</span>' +
-               '<div style="float:right;border:none;"><a  class="morebutton" href="#">' + opt.NextButtonText + '</a></div></div>';
+               '<div style="float:right;border:none;"><a  class="nextButton" href="#">' + opt.NextButtonText + '</a></div></div>';
             }
             else if ((currentPage * pageSize) + pageSize < data.length && this.opt.currentPage != 0) {
                 html += '<div class="' + FooterCSS + '" ><span style="float:left">' + opt.TotalItemText + ':' + opt.data.length + '(' + opt.CurrentPageText + ':' + (opt.currentPage + 1) + ')</span>' +
-               '<div style="float:right;display:inline;border:none;"><a  class="prevButton" href="#">' + opt.PrevButtonText + '</a>&nbsp;<a  class="morebutton" href="#">' + opt.NextButtonText + '</a></div></div>';
+               '<div style="float:right;display:inline;border:none;"><a  class="prevButton" href="#">' + opt.PrevButtonText + '</a>&nbsp;<a  class="nextButton" href="#">' + opt.NextButtonText + '</a></div></div>';
             }
             else {
                 html += '<div class="' + FooterCSS + '" ><span style="float:left">' + opt.TotalItemText + ':' + opt.data.length + '</span></div>';
@@ -430,7 +442,7 @@ JSLightGrid = function JSLightGrid(options) {
 
                 coldivs[x].onclick = function () {
                     var node = document.getElementById(this.id), dvSort;
-                    if (node.getElementsByClassName("uparrow").length == 0 && node.getElementsByClassName("uparrow").length == 0) {
+                    if (node.getElementsByClassName("uparrow").length == 0 && node.getElementsByClassName("downarrow").length == 0) {
                         reverse = false;
                         dvSort = document.createElement("div");
                         dvSort.className = "uparrow";
@@ -453,6 +465,7 @@ JSLightGrid = function JSLightGrid(options) {
                         node.appendChild(dvSort);
                     }
                     //reinitialize
+                    var opt = self.getOptions(this.parentElement.parentElement.id);
                     opt.data = opt.data.sort(self.sort_by(this.getAttribute("data-name"), reverse, function (a) { return (typeof a == 'undefined' || a == null ? '' : a.toUpperCase()) }, reverse));
                     opt.SortBy = this.getAttribute("data-name");
                     opt.IsInitial = true;
@@ -479,7 +492,7 @@ JSLightGrid = function JSLightGrid(options) {
             }
 
             lastCol.onclick = function () {
-                if (lastCol.getElementsByClassName("uparrow").length == 0 && lastCol.getElementsByClassName("uparrow").length == "downarrow") {
+                if (lastCol.getElementsByClassName("uparrow").length == 0 && lastCol.getElementsByClassName("downarrow").length == 0) {
                     reverse = false;
                     dvSort = document.createElement("div");
                     dvSort.className = "uparrow";
@@ -500,6 +513,7 @@ JSLightGrid = function JSLightGrid(options) {
                     lastCol.appendChild(dvSort);
                 }
                 //reinitialize
+                var opt = self.getOptions(this.parentElement.parentElement.id);
                 opt.data = opt.data.sort(self.sort_by(this.getAttribute("data-name"), reverse, function (a) { return (typeof a == 'undefined' || a == null ? '' : a.toUpperCase()) }, reverse));
                 opt.SortBy = this.getAttribute("data-name");
                 opt.IsInitial = true;
@@ -527,19 +541,27 @@ JSLightGrid = function JSLightGrid(options) {
 
             if (opt.currentPage != 0 && opt.template != 2)
                 elem.getElementsByClassName("prevButton")[0].onclick = function () {
+                    var options = self.getOptions(this.parentElement.parentElement.parentElement.id)
+                    options.IsInitial = false;
+                    options.currentPage = (options.currentPage - 1);
+                    self.Initialize(null, options);
 
-                    opt.IsInitial = false;
-                    opt.currentPage = (opt.currentPage - 1);
-                    self.Initialize(null, opt);
+                };
+            if ((currentPage * pageSize) + pageSize < data.length && opt.template != 2)
+                elem.getElementsByClassName("nextButton")[0].onclick = function () {
+                    var options = self.getOptions(this.parentElement.parentElement.parentElement.id)
+                    options.IsInitial = false;
+                    options.currentPage = (options.currentPage + 1);
+                    self.Initialize(null, options);
 
                 };
 
-            if ((currentPage * pageSize) + pageSize < data.length)
+            if ((currentPage * pageSize) + pageSize < data.length && opt.template == 2)
                 elem.getElementsByClassName("morebutton")[0].onclick = function () {
-
-                    opt.IsInitial = false;
-                    opt.currentPage = (opt.currentPage + 1);
-                    self.Initialize(null, opt);
+                    var options = self.getOptions(this.parentElement.parentElement.id)
+                    options.IsInitial = false;
+                    options.currentPage = (options.currentPage + 1);
+                    self.Initialize(null, options);
 
                 };
         }
